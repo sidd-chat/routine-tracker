@@ -28,12 +28,13 @@ import useAtomDialog from '@/hooks/useAtomDialog'
 // * Add XP to each Atom
 // * CRUD Complete
 // * Implement basic tasks fully frontend and backend
+// * Get Chart Up and Running
+// * Add XP and Levels Implementation Backend
+// * Add XP and Levels Implementation Frontend
+// * Check if on updating atom XP, charts update or not
 // ? Google Login should route to /dashboard and not /
 
 // ! Test optimistic updates on failure rollback working or not
-
-// ? Add XP and Levels Implementation Backend
-// ? Get Chart Up and Running
 
 // ? Impelement Rewards Shop
 // ? Continue Backend
@@ -123,8 +124,27 @@ const Tracker = () => {
       }
     }
 
+    const fetchUserXpAndLevel = async () => {
+      const { data, error } = await supabase
+        .from('user_stats')
+        .select()
+        .eq('user_id', user?.id)
+        .single()
+
+      if(error) {
+        console.log('Error fetching XP and Level:', error)
+      }
+
+      if (data) {
+        setXp(data.total_xp)
+        setLevel(data.level)
+      }
+    }
+
+
     fetchAtoms();
     fetchCompletionsMap();
+    fetchUserXpAndLevel();
     setHasMounted(true);
   }, [user]);
 
@@ -221,7 +241,7 @@ const Tracker = () => {
       )}
 
       {/* <div className={`w-200 grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}> */}
-      <Card className={`w-200 p-10 justify-center items-center grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}>
+      <Card className={`w-full max-w-4xl p-10 justify-center items-center grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}>
       {/* <div className={`grid grid-cols-[150px_repeat(7,32px)] auto-rows-min gap-[10px]`}> */}
         <CalendarHeader
           year={year}
@@ -251,7 +271,11 @@ const Tracker = () => {
         </div>
       </Card>
 
-      <Charts />
+      {user ? (
+        <Charts userId={user.id} />
+      ) : (
+        <div className="text-sm text-muted-foreground">Loading your stats...</div>
+      )}
     </div>
   )
 }

@@ -19,7 +19,7 @@ const AtomItem = ({ atom, atoms, setAtoms, completions, toggleCompletion, year, 
           {dialog}
         </Pencil>
 
-        <span className='font-medium w-35 bg-black/80 rounded-lg py-2 px-3 text-white'>
+        <span className='font-medium w-35 bg-black/80 rounded-lg py-2 px-3 text-center text-white'>
           {atom.name}
         </span>
       </div>
@@ -30,7 +30,7 @@ const AtomItem = ({ atom, atoms, setAtoms, completions, toggleCompletion, year, 
         return (
           <div
             key={day}
-            className={`w-8 h-8 border text-center text-xs flex items-center justify-center cursor-pointer
+            className={`w-8 h-8 border-2 text-center text-xs flex items-center justify-center cursor-pointer
               ${completed ? 'text-white' : 'bg-muted hover:bg-gray-200'}`}
             style={completed && atom.color ? { backgroundColor: atom.color } : {}}
             onClick={() => toggleCompletion(atom.id, date)}

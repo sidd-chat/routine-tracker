@@ -25,7 +25,7 @@ const AVAILABLE_COLORS = [
 
 export default function AddAtomItem({setAtoms, atoms, userId, type, atomToEdit, open, setOpen} : AddAtomItemProps) {
   const [name, setName] = useState<string>('');
-  const [xp, setXp] = useState(1);
+  const [xp, setXp] = useState(5);
   const [color, setColor] = useState<string>();
   useEffect(() => {
     if (type === 'edit' && atomToEdit) {

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn, navItems } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Landmark } from 'lucide-react'
+import { Landmark, LogOut } from 'lucide-react'
 import supabase from '@/lib/supabase'
 
 const Navbar = () => {
@@ -41,7 +41,7 @@ const Navbar = () => {
 
       <Link href="/login">
         <Button variant="ghost" className="flex items-center gap-2 cursor-pointer" onClick={handleLogout}>
-          <Landmark className="h-4 w-4" />
+          <LogOut className="h-4 w-4" />
           Logout
         </Button>
       </Link>
