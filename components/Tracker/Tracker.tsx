@@ -14,6 +14,7 @@ import AddAtomItem from './AddAtomItem'
 import { Charts } from '../Charts'
 import useUser from '@/hooks/useUser'
 import { Card } from '../ui/card'
+import useAtomDialog from '@/hooks/useAtomDialog'
 
 
 // * Add XP system and levels - Done
@@ -21,12 +22,18 @@ import { Card } from '../ui/card'
 // * Add Supabase Backend DB - Done
 // * Fix wrong, that is, +1 date display tick in grid
 // * Add Supabase Auth
+// * Implement RLS
+// * CRU out of CRUD Done
+// * Fix atom list not updating immediately after edit atom
+// * Add XP to each Atom
+// * CRUD Complete
+// * Implement basic tasks fully frontend and backend
+// ? Google Login should route to /dashboard and not /
 
-// * Add Google Login Support
-// ? Implement RLS
+// ! Test optimistic updates on failure rollback working or not
+
+// ? Add XP and Levels Implementation Backend
 // ? Get Chart Up and Running
-// ? Add XP to each Atom
-// ? Implement basic tasks fully frontend and backend
 
 // ? Impelement Rewards Shop
 // ? Continue Backend
@@ -68,6 +75,7 @@ const Tracker = () => {
   const currentWeekDays = weekDays[currentWeekIndex];
 
   const { user, loading, isLoggedIn } = useUser();
+  const { dialog, openAddDialog, openEditDialog } = useAtomDialog({ userId: user?.id, atoms, setAtoms})
 
   useEffect(() => {
     if(loading || !isLoggedIn)
@@ -78,6 +86,7 @@ const Tracker = () => {
         .from('atoms')
         .select()
         .eq('user_id', user?.id)
+        .order('created_at', {ascending: true})
 
       if(error) {
         setError('Error Fetching Atoms')
@@ -138,6 +147,7 @@ const Tracker = () => {
     const deltaXp = isCompleted ? -XP_PER_COMPLETION : XP_PER_COMPLETION;
 
     // 1. Optimistically update UI
+    const previousCompletions = structuredClone(completions)
     setCompletions((prev) => {
       const updated = isCompleted
         ? prev[habitId].filter((d) => d !== date)
@@ -186,6 +196,14 @@ const Tracker = () => {
     } catch (err) {
       console.error('❌ Failed to sync with Supabase:', err);
       // ! toast error + rollback frontend state
+      setCompletions(previousCompletions)
+
+    // ❗ Bonus: rollback XP and level too
+      setXp((prevXp) => {
+        const newXp = prevXp - deltaXp;
+        setLevel(Math.floor(newXp / XP_PER_LEVEL) + 1);
+        return newXp;
+      });
     }
   };
 
@@ -219,6 +237,7 @@ const Tracker = () => {
         <SectionList
           title="Atoms"
           atoms={atoms}
+          setAtoms={setAtoms}
           type="atom"
           completions={completions}
           toggleCompletion={toggleCompletion}
@@ -228,7 +247,7 @@ const Tracker = () => {
         />
 
         <div className="col-span-full flex justify-center items-center mt-4">
-          <AddAtomItem setAtoms={setAtoms} userId={user?.id} />
+          {dialog}
         </div>
       </Card>
 

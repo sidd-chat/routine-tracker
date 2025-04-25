@@ -4,13 +4,16 @@ export type CompletionMap = {
 
 export type Atom = {
   id: string
+  user_id: string
   name: string
+  xp?: number
   color?: string
-  core?: string
 }
 
 export interface AtomItemProps {
   atom: Atom
+  atoms: Atom[]
+  setAtoms: React.Dispatch<React.SetStateAction<Atom[]>>
   completions: CompletionMap
   toggleCompletion: (habitId: string, date: string) => void
   year: number
@@ -21,10 +24,21 @@ export interface AtomItemProps {
 export interface SectionListProps {
   title: string
   atoms: Atom[]
+  setAtoms: React.Dispatch<React.SetStateAction<Atom[]>>
   type: 'atom' | 'core' | 'pathway' | 'legacy'
   completions: CompletionMap
   toggleCompletion: (habitId: string, date: string) => void
   year: number
   month: number
   currentWeekDays: number[]
+}
+
+export interface AddAtomItemProps {
+  atoms: Atom[];
+  setAtoms: React.Dispatch<React.SetStateAction<Atom[]>>;
+  userId: string | undefined;
+  type: 'add' | 'edit';
+  atomToEdit?: Atom;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }

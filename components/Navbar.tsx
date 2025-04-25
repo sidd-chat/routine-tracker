@@ -17,7 +17,7 @@ const Navbar = () => {
     if(error) {
       alert(error.message)
     } else {
-      router.push('/login')
+      router.replace('/login')
     }
   }
 

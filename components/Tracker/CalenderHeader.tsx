@@ -1,18 +1,9 @@
 import { getCurrentDay, getMonthFromIndex } from '@/lib/utils';
 import React from 'react'
 import { Button } from '../ui/button';
+import { Separator } from '@radix-ui/react-separator';
 
-// const CalendarHeader = ({ totalDays, year, month }: { totalDays: number; year: number; month: number }) => (
-//   <>
-//     <div className="bg-background font-bold">Atoms</div>
-//     {Array.from({ length: totalDays }, (_, i) => (
-//       <div key={i} className='flex flex-col gap-2'>
-//         <div className="text-center text-sm">{i + 1}</div>
-//         <div className="text-center text-sm">{getCurrentDay(year, month, i + 1)}</div>
-//       </div>
-//     ))}
-//   </>
-// );
+const TODAY = new Date().getDate();
 
 const CalendarHeader = ({
   year,
@@ -40,16 +31,20 @@ const CalendarHeader = ({
       <Button onClick={onNextWeek} disabled={!canGoNext}>→</Button>
     </div>
 
-    <div className="bg-background font-bold"></div>
+    <Separator className='bg-black text-black'/>
 
     {currentWeek.map((day) => (
-      <div key={day} className="text-center text-sm">
+      <div
+        key={day}
+        className={`text-center text-sm h-11 flex flex-col items-center justify-center ${TODAY === day && 'bg-black/80 text-white'}`}
+      >
         <div>{day}</div>
+        {/* // ! Add separator */}
+        <Separator className='bg-black text-black'/>
         <div>{getCurrentDay(year, month, day)}</div>
       </div>
     ))}
   </>
 );
-
 
 export default CalendarHeader;

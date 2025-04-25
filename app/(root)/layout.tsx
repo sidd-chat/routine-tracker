@@ -6,12 +6,12 @@ import React, { ReactNode } from 'react'
 import { config } from "@fortawesome/fontawesome-svg-core"
 import "@fortawesome/fontawesome-svg-core/styles.css"
 import useUser from '@/hooks/useUser';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 config.autoAddCss = false
 
 const RootLayout = ({ children } : { children: ReactNode }) => {
-  const { user, loading} = useUser();
+  const { user, loading } = useUser();
   const router = useRouter();
 
   if(loading) return null; // or skeleton or spinner
