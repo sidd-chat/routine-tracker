@@ -12,16 +12,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import supabase from "@/lib/supabase"
 import { AddAtomItemProps, Atom } from "@/lib/types"
+import { AVAILABLE_COLORS } from "@/lib/utils"
 import { Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 
-const AVAILABLE_COLORS = [
-  '#077A7D',
-  '#FE7743',
-  '#C5172E',
-  '#FFD63A',
-  '#3F7D58'
-]
+
 
 export default function AddAtomItem({setAtoms, atoms, userId, type, atomToEdit, open, setOpen} : AddAtomItemProps) {
   const [name, setName] = useState<string>('');

@@ -36,11 +36,10 @@ const CalendarHeader = ({
     {currentWeek.map((day) => (
       <div
         key={day}
-        className={`text-center text-sm h-11 flex flex-col items-center justify-center ${TODAY === day && 'bg-black/80 text-white'}`}
+        className={`text-center text-sm py-1 rounded flex flex-col items-center justify-center ${TODAY === day && 'bg-black/80 text-white'}`}
       >
         <div>{day}</div>
-        {/* // ! Add separator */}
-        <Separator className='bg-black text-black'/>
+        <hr className='w-full h-0.5 my-0.5 bg-black text-black'/>
         <div>{getCurrentDay(year, month, day)}</div>
       </div>
     ))}

@@ -14,7 +14,14 @@ export const navItems = [
   { name: 'Account', href: '/account', icon: Star },
 ]
 
-// helper to get number of days in a JS month
+export const AVAILABLE_COLORS = [
+  '#077A7D',
+  '#FE7743',
+  '#C5172E',
+  '#FFD63A',
+  '#3F7D58'
+]
+
 export const getDaysInMonth = (year: number, month: number) =>
   new Date(year, month + 1, 0).getDate();
 

@@ -34,6 +34,7 @@ import HelperAI from '../HelperAI'
 // * Add XP and Levels Implementation Frontend
 // * Check if on updating atom XP, charts update or not
 // * Implement Leaderboard
+// * Added AI Helper - Gemini 2.0 Flash
 // ? Google Login should route to /dashboard and not /
 
 // ! Test optimistic updates on failure rollback working or not
