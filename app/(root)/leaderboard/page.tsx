@@ -13,7 +13,7 @@ const Leaderboard = () => {
     const fetchUsersStats = async () => {
       const { data: users , error } = await supabase
         .from('user_stats')
-        .select('user_id, total_xp, level')
+        .select('user_id, username, total_xp, level')
         .order('total_xp', {ascending: false})
 
       if(error || !users) {
@@ -44,7 +44,7 @@ const Leaderboard = () => {
             const isCurrentUser = user.user_id === currentUser?.id;
             return (
               <tr
-                key={user.user_id}
+                key={user.username}
                 className={`${
                   isCurrentUser ? 'bg-orange-200' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                 }`}
@@ -53,7 +53,7 @@ const Leaderboard = () => {
                   {index < 3 ? medals[index] : index + 1}
                 </td>
                 <td className="px-4 py-2 font-medium">
-                  {user.user_id}
+                  {user.username}
                   {isCurrentUser && (
                     <span className="ml-2 text-sm text-blue-600">(You)</span>
                   )}

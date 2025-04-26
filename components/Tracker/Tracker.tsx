@@ -15,6 +15,7 @@ import { Charts } from '../Charts'
 import useUser from '@/hooks/useUser'
 import { Card } from '../ui/card'
 import useAtomDialog from '@/hooks/useAtomDialog'
+import HelperAI from '../HelperAI'
 
 
 // * Add XP system and levels - Done
@@ -245,6 +246,8 @@ const Tracker = () => {
           recycle={false}
         />
       )}
+
+      <HelperAI />
 
       {/* <div className={`w-200 grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}> */}
       <Card className={`w-full max-w-4xl p-10 justify-center items-center grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}>

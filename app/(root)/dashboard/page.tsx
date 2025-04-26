@@ -10,7 +10,6 @@ import React, { useEffect } from 'react'
 const Dashboard = () => {
   return (
     <main className="flex flex-col overflow-x-hidden">
-      <h2 className="text-4xl font-semibold mt-8 mx-auto">Your Dashboard</h2>
       <Tracker />
     </main>
   )
