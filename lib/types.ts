@@ -15,7 +15,7 @@ export interface AtomItemProps {
   atoms: Atom[]
   setAtoms: React.Dispatch<React.SetStateAction<Atom[]>>
   completions: CompletionMap
-  toggleCompletion: (habitId: string, date: string) => void
+  toggleCompletion: (habitId: string, xp: number, date: string) => void
   year: number
   month: number
   weekDays: number[]
@@ -27,7 +27,7 @@ export interface SectionListProps {
   setAtoms: React.Dispatch<React.SetStateAction<Atom[]>>
   type: 'atom' | 'core' | 'pathway' | 'legacy'
   completions: CompletionMap
-  toggleCompletion: (habitId: string, date: string) => void
+  toggleCompletion: (habitId: string, xp: number, date: string) => void
   year: number
   month: number
   currentWeekDays: number[]

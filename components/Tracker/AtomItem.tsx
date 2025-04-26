@@ -33,7 +33,8 @@ const AtomItem = ({ atom, atoms, setAtoms, completions, toggleCompletion, year, 
             className={`w-8 h-8 border-2 text-center text-xs flex items-center justify-center cursor-pointer
               ${completed ? 'text-white' : 'bg-muted hover:bg-gray-200'}`}
             style={completed && atom.color ? { backgroundColor: atom.color } : {}}
-            onClick={() => toggleCompletion(atom.id, date)}
+            // ! Check if default xp as 5 is valid
+            onClick={() => toggleCompletion(atom.id, atom.xp || 5, date)}
           >
             {completed ? '✓' : ''}
           </div>

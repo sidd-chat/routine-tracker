@@ -20,7 +20,7 @@ import useAtomDialog from '@/hooks/useAtomDialog'
 // * Add XP system and levels - Done
 // * Fix confetti on box check - Done
 // * Add Supabase Backend DB - Done
-// * Fix wrong, that is, +1 date display tick in grid
+// * Fix wrong date, that is, +1 date display tick in grid
 // * Add Supabase Auth
 // * Implement RLS
 // * CRU out of CRUD Done
@@ -32,6 +32,7 @@ import useAtomDialog from '@/hooks/useAtomDialog'
 // * Add XP and Levels Implementation Backend
 // * Add XP and Levels Implementation Frontend
 // * Check if on updating atom XP, charts update or not
+// * Implement Leaderboard
 // ? Google Login should route to /dashboard and not /
 
 // ! Test optimistic updates on failure rollback working or not
@@ -45,7 +46,6 @@ import useAtomDialog from '@/hooks/useAtomDialog'
 // * ------ MVP DONE ------
 
 // ? Implement cores, pathways and legacies
-// ? Implement Leaderboard
 // ? Complete Backend
 
 const XP_PER_COMPLETION = 10;
@@ -141,7 +141,6 @@ const Tracker = () => {
       }
     }
 
-
     fetchAtoms();
     fetchCompletionsMap();
     fetchUserXpAndLevel();
@@ -162,12 +161,13 @@ const Tracker = () => {
     }, 500);
   };
 
-  const toggleCompletion = async (habitId: string, date: string) => {
+  const toggleCompletion = async (habitId: string, xp: number, date: string) => {
     const isCompleted = completions[habitId]?.includes(date) ?? false;
-    const deltaXp = isCompleted ? -XP_PER_COMPLETION : XP_PER_COMPLETION;
+    const deltaXp = isCompleted ? -xp : xp;
 
     // 1. Optimistically update UI
-    const previousCompletions = structuredClone(completions)
+    let previousCompletions = structuredClone(completions)
+    let previousLevel = level
     setCompletions((prev) => {
       const updated = isCompleted
         ? prev[habitId].filter((d) => d !== date)
@@ -182,7 +182,13 @@ const Tracker = () => {
     // 2. Update XP and level
     setXp((prevXp) => {
       const newXp = prevXp + deltaXp;
-      setLevel(Math.floor(newXp / XP_PER_LEVEL) + 1);
+
+      let newLevel = 1;
+      while (newXp >= 50 * (newLevel * newLevel)) {
+        newLevel++;
+      }
+      setLevel(newLevel);
+
       return newXp;
     });
 
@@ -215,20 +221,20 @@ const Tracker = () => {
       }
     } catch (err) {
       console.error('❌ Failed to sync with Supabase:', err);
-      // ! toast error + rollback frontend state
+      // ! toast error
       setCompletions(previousCompletions)
 
-    // ❗ Bonus: rollback XP and level too
+    // rollback XP and level too
       setXp((prevXp) => {
         const newXp = prevXp - deltaXp;
-        setLevel(Math.floor(newXp / XP_PER_LEVEL) + 1);
+        setLevel(previousLevel);
         return newXp;
       });
     }
   };
 
   return (
-    <div className='flex flex-col gap-2 items-center mt-10'>
+    <div className='flex flex-col gap-2 items-center justify-center mt-10'>
       <UserStats level={level} xp={xp}/>
 
       {hasMounted && confettiPieces > 0 && (
