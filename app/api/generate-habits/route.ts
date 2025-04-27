@@ -37,14 +37,14 @@ A user has shared the following goal with you:
 Your task:
 - Break it down into simple, achievable daily habits known as 'atoms'.
 - Each atom must follow the SMART principle (Specific, Measurable, Achievable, Relevant, Time-bound).
-- Suggest 2 to 5 habits maximum.
+- Suggest 2 to 5 daily habits maximum.
 - Be realistic based on normal human energy levels.
 - Write output only as a valid JSON array without any extra words.
 
 Return only a valid JSON block without any markdown formatting or backticks:
 [
   {
-    "name": "Habit name within 10 characters",
+    "name": "Daily habit name within 10 characters that is concise yet clear and to the point",
     "color": "Appropriate color corresponding to the habit, e.g. '#077A7D' ",
     "xp": "Depending on the difficulty and reward of the habit with respect to the goal, return an xp value that is 5, 10, 15, or 20. No less than 5 and no more than 20.",
   },

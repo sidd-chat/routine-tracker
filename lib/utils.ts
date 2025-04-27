@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-import { Flame, Target, Star, Atom } from 'lucide-react'
+import { Flame, Target, Star, Atom, UserRound } from 'lucide-react'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -11,7 +11,7 @@ export const navItems = [
   { name: 'Tracker', href: '/dashboard', icon: Atom },
   { name: 'Rewards Shop', href: '/rewards', icon: Target },
   { name: 'Leaderboard', href: '/leaderboard', icon: Flame },
-  { name: 'Account', href: '/account', icon: Star },
+  { name: 'Account', href: '/account', icon: UserRound },
 ]
 
 export const AVAILABLE_COLORS = [

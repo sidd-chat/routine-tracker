@@ -2,21 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import { Atom, CompletionMap } from '@/lib/types'
-import { getCurrentDay, getDaysInMonth, getWeeksInMonth } from '@/lib/utils'
+import { getWeeksInMonth } from '@/lib/utils'
 import Confetti from 'react-confetti'
 import { useWindowSize } from 'react-use'
 import SectionList from './SectionList'
-import { Button } from '../ui/button'
 import supabase from '@/lib/supabase'
 import UserStats from '../UserStats'
 import CalendarHeader from './CalenderHeader'
-import AddAtomItem from './AddAtomItem'
 import { Charts } from '../Charts'
 import useUser from '@/hooks/useUser'
 import { Card } from '../ui/card'
 import useAtomDialog from '@/hooks/useAtomDialog'
 import HelperAI from '../HelperAI'
-
 
 // * Add XP system and levels - Done
 // * Fix confetti on box check - Done
@@ -35,23 +32,24 @@ import HelperAI from '../HelperAI'
 // * Check if on updating atom XP, charts update or not
 // * Implement Leaderboard
 // * Added AI Helper - Gemini 2.0 Flash
+// * Impelement Rewards Shop
+// * Add Responsiveness
+// * Add Small Device Sidebar Toggle
+// * Finish Helper AI Implementation
 // ? Google Login should route to /dashboard and not /
 
 // ! Test optimistic updates on failure rollback working or not
 
-// ? Impelement Rewards Shop
-// ? Continue Backend
+// TODO: Continue Backend
+// TODO: Implement Caching
 
-// ? Add Responsiveness
-// ? Improve Design
+// TODO: Tailwind CSS Colors Implement
+// TODO: Add Light and Dark Mode
 
 // * ------ MVP DONE ------
 
-// ? Implement cores, pathways and legacies
-// ? Complete Backend
-
-const XP_PER_COMPLETION = 10;
-const XP_PER_LEVEL = 100;
+// TODO: Implement cores, pathways and legacies
+// TODO: Complete Backend
 
 const Tracker = () => {
   const date = new Date();
@@ -284,7 +282,7 @@ const Tracker = () => {
       {user ? (
         <Charts userId={user.id} />
       ) : (
-        <div className="text-sm text-muted-foreground">Loading your stats...</div>
+        <div className="text-sm text-muted-foreground mt-10">Loading your stats...</div>
       )}
     </div>
   )

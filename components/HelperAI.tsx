@@ -1,12 +1,12 @@
 'use client';
 
-import { Bot, Send } from 'lucide-react';
+import { Bot, Send, Trash } from 'lucide-react';
 import React, { useState } from 'react';
 import { Input } from './ui/input';
-import { Button } from './ui/button'; // Assuming you have a button component
+import { Button } from './ui/button';
 import { Atom } from '@/lib/types';
-import { AVAILABLE_COLORS } from '@/lib/utils';
 import supabase from '@/lib/supabase';
+import useUser from '@/hooks/useUser';
 
 export function validateAtoms(data: any): Atom[] {
   if (!Array.isArray(data)) {
@@ -29,6 +29,8 @@ export function validateAtoms(data: any): Atom[] {
 
 
 const HelperAI = () => {
+  const {user} = useUser();
+
   const [userGoal, setUserGoal] = useState('');
   const [loading, setLoading] = useState(false);
   const [atoms, setAtoms] = useState<Atom[]>([]);
@@ -57,14 +59,14 @@ const HelperAI = () => {
     }
   };
 
-  const saveHabitsToSupabase = async (userId: string) => {
-    if (atoms.length === 0) return;
+  const saveHabitsToSupabase = async (userId: string | undefined) => {
+    if (!userId || atoms.length === 0) return;
 
     const inserts = atoms.map(atom => ({
       user_id: userId,
-      name: atom.name, // assuming AI output format
+      name: atom.name,
       color: atom.color,
-      xp: atom.xp,
+      xp: Number(atom.xp),
       created_at: new Date().toISOString(),
     }));
 
@@ -73,13 +75,17 @@ const HelperAI = () => {
     if (error) {
       console.error('Failed to save atoms:', error);
     } else {
-      console.log('Saved atoms:', data);
+      console.log('Saved atoms:', atoms);
+      setAtoms([]);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!userGoal.trim()) return;
+
+    if (!userGoal.trim())
+      return;
+
     await generateHabits(userGoal);
   };
 
@@ -106,7 +112,7 @@ const HelperAI = () => {
           {loading ? (
             <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
           ) : (
-            <Send size={18} />
+            <Send size={18} className='cursor-pointer'/>
           )}
         </Button>
       </form>
@@ -116,18 +122,55 @@ const HelperAI = () => {
           <h2 className="text-lg font-semibold mb-4">AI Suggested Habits:</h2>
           <ul className="space-y-2">
             {atoms.map((atom, index) => (
-              <li key={index} className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg flex items-center justify-between">
-                <span>
-                  <strong>{atom.name}</strong> - {atom.xp} XP
-                </span>
+              <li
+                key={index}
+                className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg flex flex-col md:flex-row items-center justify-between gap-3"
+              >
+                <div className="flex flex-col md:flex-row gap-2 items-center flex-1">
+                  <Input
+                    type="text"
+                    value={atom.name}
+                    onChange={(e) => {
+                      const newName = e.target.value;
+                      setAtoms((prev) => {
+                        const updated = [...prev];
+                        updated[index] = { ...updated[index], name: newName };
+                        return updated;
+                      });
+                    }}
+                    className="flex-1"
+                    placeholder="Habit name"
+                  />
+                  <Input
+                    type="number"
+                    value={atom.xp}
+                    onChange={(e) => {
+                      const newXp = parseInt(e.target.value) || 0;
+                      setAtoms((prev) => {
+                        const updated = [...prev];
+                        updated[index] = { ...updated[index], xp: newXp };
+                        return updated;
+                      });
+                    }}
+                    className="w-24"
+                    placeholder="XP"
+                  />
+                </div>
 
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => setAtoms(prev => prev.filter((_, i) => i !== index))}
+                >
+                  <Trash size={18} />
+                </Button>
               </li>
             ))}
           </ul>
 
           <Button
             className='mt-5 cursor-pointer'
-            onClick={() => saveHabitsToSupabase('user-id')}
+            onClick={() => saveHabitsToSupabase(user?.id)}
           >
             Save to My Atoms
           </Button>

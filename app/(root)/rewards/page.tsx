@@ -1,112 +1,152 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from "react";
+import { formatDistanceToNowStrict, addDays, isBefore } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 
-interface Reward {
-  id: string;
+type Reward = {
+  id: number;
   name: string;
-  description: string;
-  price: number;
-}
+  coinCost: number;
+  cooldownDays: number;
+  lastRedeemed?: Date | null;
+  isCustom?: boolean;
+};
 
-export default function Rewards({ userId }: { userId: string }) {
-  const [rewards, setRewards] = useState<Reward[]>([]);
-  const [tokens, setTokens] = useState<number>(0);
-  const [newReward, setNewReward] = useState<{ name: string; description: string; price: number }>({
-    name: '',
-    description: '',
-    price: 0
-  });
+const initialRewards: Reward[] = [
+  { id: 1, name: "Power Nap", coinCost: 100, cooldownDays: 1 },
+  { id: 2, name: "Streak Shield", coinCost: 250, cooldownDays: 7 },
+  { id: 3, name: "Color Theme Unlock", coinCost: 300, cooldownDays: 0 },
+  { id: 4, name: "Double XP Day", coinCost: 500, cooldownDays: 14 },
+  { id: 5, name: "Profile Badge", coinCost: 150, cooldownDays: 0 },
+  { id: 6, name: "Mystery Surprise", coinCost: 100, cooldownDays: 3 },
+];
 
-  // Mock data for rewards and user stats
-  useEffect(() => {
-    // Mock the reward list (replace with actual API call)
-    const fetchedRewards: Reward[] = [
-      { id: '1', name: 'Custom Avatar', description: 'A custom avatar for your profile', price: 50 },
-      { id: '2', name: 'Gift Card', description: 'A $10 gift card', price: 100 },
-      { id: '3', name: 'Premium Theme', description: 'A premium profile theme', price: 150 },
-    ];
-    setRewards(fetchedRewards);
+export default function RewardsShop() {
+  const [rewards, setRewards] = useState<Reward[]>(initialRewards);
+  const [newRewardName, setNewRewardName] = useState("");
+  const [newRewardCost, setNewRewardCost] = useState("");
+  const [newRewardCooldown, setNewRewardCooldown] = useState("");
 
-    // Mock user tokens (replace with actual user data fetching)
-    const mockTokens = 200;  // Example of user tokens based on XP and level
-    setTokens(mockTokens);
-  }, []);
-
-  const handlePurchase = (rewardId: string, price: number) => {
-    if (tokens >= price) {
-      setTokens(tokens - price);
-      alert('Reward purchased!');
-    } else {
-      alert('You do not have enough tokens!');
-    }
+  const handleRedeem = (id: number) => {
+    setRewards((prev) =>
+      prev.map((reward) =>
+        reward.id === id
+          ? { ...reward, lastRedeemed: new Date() }
+          : reward
+      )
+    );
+    // TODO: Deduct coins from user coins here
   };
 
   const handleAddReward = () => {
-    if (newReward.name && newReward.price > 0) {
-      const newRewardData = { ...newReward, id: `${Date.now()}` };
-      setRewards([newRewardData, ...rewards]);
-      setNewReward({ name: '', description: '', price: 0 });
-      alert('New reward added successfully!');
-    } else {
-      alert('Please provide all required information');
-    }
+    if (!newRewardName || !newRewardCost || !newRewardCooldown) return;
+
+    const newReward: Reward = {
+      id: Date.now(),
+      name: newRewardName,
+      coinCost: parseInt(newRewardCost),
+      cooldownDays: parseInt(newRewardCooldown),
+      isCustom: true,
+    };
+
+    setRewards((prev) => [...prev, newReward]);
+    setNewRewardName("");
+    setNewRewardCost("");
+    setNewRewardCooldown("");
+  };
+
+  const isRewardAvailable = (reward: Reward) => {
+    if (!reward.lastRedeemed) return true;
+    const nextAvailable = addDays(reward.lastRedeemed, reward.cooldownDays);
+    return isBefore(new Date(), nextAvailable) ? false : true;
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Your Tokens: {tokens}</h2>
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mt-10 mb-6 text-center">🎁 Rewards Shop</h1>
 
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Available Rewards</h3>
-        <div className="space-y-4">
-          {rewards.map((reward) => (
-            <div key={reward.id} className="p-4 border rounded-md shadow-md">
-              <h4 className="text-lg font-semibold">{reward.name}</h4>
-              <p>{reward.description}</p>
-              <p className="text-sm text-gray-500">Price: {reward.price} Tokens</p>
-              <button
-                onClick={() => handlePurchase(reward.id, reward.price)}
-                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              >
-                Buy
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Card className="mb-8">
+        <CardContent className="overflow-x-auto p-4">
+          <table className="w-full table-auto">
+            <thead>
+              <tr className="text-left border-b">
+                <th className="p-2">Reward</th>
+                <th className="p-2">Cost (coins)</th>
+                <th className="p-2">Cooldown</th>
+                <th className="p-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rewards.map((reward) => {
+                const available = isRewardAvailable(reward);
+                const nextAvailable = reward.lastRedeemed
+                  ? formatDistanceToNowStrict(
+                      addDays(reward.lastRedeemed, reward.cooldownDays),
+                      { addSuffix: true }
+                    )
+                  : null;
 
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Add a New Reward</h3>
-        <div className="space-y-4">
-          <input
-            type="text"
-            value={newReward.name}
-            onChange={(e) => setNewReward({ ...newReward, name: e.target.value })}
-            placeholder="Reward Name"
-            className="p-2 w-full border rounded-md"
-          />
-          <textarea
-            value={newReward.description}
-            onChange={(e) => setNewReward({ ...newReward, description: e.target.value })}
-            placeholder="Reward Description"
-            className="p-2 w-full border rounded-md"
-          />
-          <input
-            type="number"
-            value={newReward.price}
-            onChange={(e) => setNewReward({ ...newReward, price: parseInt(e.target.value) })}
-            placeholder="Reward Price (Tokens)"
-            className="p-2 w-full border rounded-md"
-          />
-          <button
-            onClick={handleAddReward}
-            className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-          >
-            Add Reward
-          </button>
-        </div>
-      </div>
+                return (
+                  <tr key={reward.id} className="border-b hover:bg-muted/50">
+                    <td className="p-2 font-semibold">
+                      {reward.name}
+                      {reward.isCustom && (
+                        <span className="text-xs ml-2 text-muted-foreground">(Custom)</span>
+                      )}
+                    </td>
+                    <td className="p-2">{reward.coinCost}</td>
+                    <td className="p-2">
+                      {reward.cooldownDays > 0 ? `${reward.cooldownDays}d` : "None"}
+                    </td>
+                    <td className="p-2">
+                      {available ? (
+                        <Button size="sm" onClick={() => handleRedeem(reward.id)}>
+                          Redeem
+                        </Button>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          ⏳ {nextAvailable}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4">
+          <h2 className="text-xl font-bold mb-4">➕ Add Your Own Reward</h2>
+          <div className="flex flex-col gap-2">
+            <Input
+              placeholder="Reward name"
+              value={newRewardName}
+              onChange={(e) => setNewRewardName(e.target.value)}
+            />
+            <Input
+              placeholder="Coin cost"
+              type="number"
+              value={newRewardCost}
+              onChange={(e) => setNewRewardCost(e.target.value)}
+            />
+            <Input
+              placeholder="Cooldown (days)"
+              type="number"
+              value={newRewardCooldown}
+              onChange={(e) => setNewRewardCooldown(e.target.value)}
+            />
+            <Button className="mt-2" onClick={handleAddReward}>
+              Add Reward
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
