@@ -14,7 +14,7 @@ const AtomItem = ({ atom, atoms, setAtoms, completions, toggleCompletion, year, 
     <>
       <div className="flex items-center gap-2">
         <Pencil
-          className='w-4 h-4 bg-transparent text-black hover:bg-white cursor-pointer'
+          className='w-4 h-4 bg-transparent cursor-pointer'
           onClick={() => openEditDialog(atom)}>
           {dialog}
         </Pencil>
@@ -30,13 +30,11 @@ const AtomItem = ({ atom, atoms, setAtoms, completions, toggleCompletion, year, 
         return (
           <div
             key={day}
-            className={`w-8 h-8 border-2 text-center text-xs flex items-center justify-center cursor-pointer
+            className={`w-8 h-8 border-1 border-dotted border-black rounded-full text-center text-xs flex items-center justify-center cursor-pointer
               ${completed ? 'text-white' : 'bg-muted hover:bg-gray-200'}`}
             style={completed && atom.color ? { backgroundColor: atom.color } : {}}
-            // ! Check if default xp as 5 is valid
             onClick={() => toggleCompletion(atom.id, atom.xp || 5, date)}
           >
-            {completed ? '✓' : ''}
           </div>
         )
       })}

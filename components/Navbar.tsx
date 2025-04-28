@@ -4,14 +4,15 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn, navItems } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Landmark, LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Menu, Sun, Moon, X } from 'lucide-react'
 import supabase from '@/lib/supabase'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const Navbar = () => {
   const pathname = usePathname()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(true)
 
   const handleLogout = async () => {
     let { error } = await supabase.auth.signOut()
@@ -22,6 +23,20 @@ const Navbar = () => {
       router.replace('/login')
     }
   }
+
+  const toggleTheme = () => {
+    setIsDarkMode(prev => !prev)
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.toggle('dark')
+    }
+  }
+
+  useEffect(() => {
+    // Ensure dark mode is default
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.add('dark')
+    }
+  }, [])
 
   return (
     <>
@@ -43,23 +58,42 @@ const Navbar = () => {
           ))}
         </ul>
 
-        {/* Logout Button (Desktop) */}
-        <div className="hidden md:block">
+        {/* Desktop Right Actions */}
+        <div className="hidden md:flex items-center gap-2">
+          {/* Theme Toggle */}
+          <Button variant="ghost" size="icon" onClick={toggleTheme} className="transition-transform duration-300 hover:rotate-270 cursor-pointer">
+            {isDarkMode ? (
+              <Sun className="h-5 w-5 text-yellow-400 transition-all duration-300" />
+            ) : (
+              <Moon className="h-5 w-5 text-blue-600 transition-all duration-300" />
+            )}
+          </Button>
+
+          {/* Logout */}
           <Button variant="ghost" className="flex items-center gap-2 cursor-pointer" onClick={handleLogout}>
             <LogOut className="h-4 w-4" />
             Logout
           </Button>
         </div>
 
-        {/* Mobile Hamburger */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
+        {/* Mobile Hamburger + Theme Toggle */}
+        <div className="flex items-center gap-2 md:hidden">
+          <Button variant="ghost" size="icon" onClick={toggleTheme} className="transition-transform duration-300 hover:rotate-360">
+            {isDarkMode ? (
+              <Sun className="h-5 w-5 text-yellow-400 transition-all duration-300" />
+            ) : (
+              <Moon className="h-5 w-5 text-blue-600 transition-all duration-300" />
+            )}
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
+        </div>
       </nav>
 
       {/* Mobile Sidebar */}

@@ -16,8 +16,6 @@ import { AVAILABLE_COLORS } from "@/lib/utils"
 import { Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 
-
-
 export default function AddAtomItem({setAtoms, atoms, userId, type, atomToEdit, open, setOpen} : AddAtomItemProps) {
   const [name, setName] = useState<string>('');
   const [xp, setXp] = useState(5);
@@ -25,11 +23,11 @@ export default function AddAtomItem({setAtoms, atoms, userId, type, atomToEdit, 
   useEffect(() => {
     if (type === 'edit' && atomToEdit) {
       setName(atomToEdit.name);
-      setXp(atomToEdit.xp ? atomToEdit.xp : 1);
+      setXp(atomToEdit.xp ? atomToEdit.xp : 5);
       setColor(atomToEdit.color || '');
     } else {
       setName('');
-      setXp(1);
+      setXp(5);
       setColor(AVAILABLE_COLORS[0]);
     }
   }, [type, atomToEdit]);
@@ -173,7 +171,7 @@ export default function AddAtomItem({setAtoms, atoms, userId, type, atomToEdit, 
             </Label>
             <Input
               id="xp"
-              placeholder="1"
+              placeholder="5"
               value={xp}
               onChange={e => setXp(Number(e.target.value))}
               className="col-span-3"
@@ -202,7 +200,7 @@ export default function AddAtomItem({setAtoms, atoms, userId, type, atomToEdit, 
                 key={currentColor}
                 onClick={() => setColor(currentColor)}
                 className={`w-6 h-6 rounded-full border-2 cursor-pointer ${
-                  color === currentColor ? 'ring-2 ring-offset-0 ring-black' : ''
+                  color === currentColor ? 'ring-2 ring-offset-0 ring-black dark:ring-white' : ''
                 }`}
                 style={{ backgroundColor: currentColor }}
               />

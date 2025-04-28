@@ -1,7 +1,7 @@
 'use client';
 
 import { Bot, Send, Trash } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Atom } from '@/lib/types';
@@ -27,13 +27,26 @@ export function validateAtoms(data: any): Atom[] {
   });
 }
 
-
 const HelperAI = () => {
-  const {user} = useUser();
+  const { user } = useUser();
 
   const [userGoal, setUserGoal] = useState('');
   const [loading, setLoading] = useState(false);
   const [atoms, setAtoms] = useState<Atom[]>([]);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleSlashFocus = (e: KeyboardEvent) => {
+      if (e.key === '/') {
+        e.preventDefault(); // Prevent typing '/' elsewhere
+        inputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleSlashFocus);
+    return () => window.removeEventListener('keydown', handleSlashFocus);
+  }, []);
 
   const generateHabits = async (userGoal: string) => {
     try {
@@ -83,8 +96,7 @@ const HelperAI = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!userGoal.trim())
-      return;
+    if (!userGoal.trim()) return;
 
     await generateHabits(userGoal);
   };
@@ -96,10 +108,11 @@ const HelperAI = () => {
         className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 p-4 rounded-xl shadow-md"
       >
         <Bot size={24} className="text-gray-500 dark:text-gray-400" />
-        <Input
+        <input
+          ref={inputRef}
           type="text"
-          placeholder="Tell me your goal... I'll create your habits!"
-          className="flex-1 bg-transparent border-none outline-none text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
+          placeholder="Tap '/' to tell me your goal... I'll create your habits!"
+          className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none focus-visible:ring-0 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 h-full"
           value={userGoal}
           onChange={(e) => setUserGoal(e.target.value)}
         />
@@ -112,7 +125,7 @@ const HelperAI = () => {
           {loading ? (
             <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
           ) : (
-            <Send size={18} className='cursor-pointer'/>
+            <Send size={18} className="cursor-pointer" />
           )}
         </Button>
       </form>
@@ -169,15 +182,15 @@ const HelperAI = () => {
           </ul>
 
           <Button
-            className='mt-5 cursor-pointer'
+            className="mt-5 cursor-pointer"
             onClick={() => saveHabitsToSupabase(user?.id)}
           >
             Save to My Atoms
           </Button>
 
           <Button
-            className='ml-2 cursor-pointer'
-            variant='destructive'
+            className="ml-2 cursor-pointer"
+            variant="destructive"
             onClick={() => setAtoms([])}
           >
             Cancel

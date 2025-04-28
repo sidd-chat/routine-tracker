@@ -36,15 +36,14 @@ import HelperAI from '../HelperAI'
 // * Add Responsiveness
 // * Add Small Device Sidebar Toggle
 // * Finish Helper AI Implementation
+// * Tailwind CSS Colors Implement
+// * Add Light and Dark Mode
 // ? Google Login should route to /dashboard and not /
 
 // ! Test optimistic updates on failure rollback working or not
 
 // TODO: Continue Backend
 // TODO: Implement Caching
-
-// TODO: Tailwind CSS Colors Implement
-// TODO: Add Light and Dark Mode
 
 // * ------ MVP DONE ------
 
@@ -67,6 +66,7 @@ const Tracker = () => {
   const [xp, setXp] = useState(0);
   const [level, setLevel] = useState(1);
   const [confettiPieces, setConfettiPieces] = useState(0);
+  const [confettiOpacity, setConfettiOpacity] = useState(1);
   const [hasMounted, setHasMounted] = useState(false);
   const [currentWeekIndex, setCurrentWeekIndex] = useState(defaultWeekIndex);
   const [error, setError] = useState<string>('')
@@ -149,17 +149,28 @@ const Tracker = () => {
 
   const triggerConfetti = () => {
     let pieces = 1000;
+    let opacity = 1;
     setConfettiPieces(pieces);
+    setConfettiOpacity(opacity);
 
     const interval = setInterval(() => {
-      pieces = Math.max(0, pieces - (pieces > 100 ? 100 : 20));
+      if (pieces > 100) {
+        pieces = Math.max(0, pieces - 100);
+      } else {
+        pieces = Math.max(0, pieces - 20);
+      }
+
+      // Decrease opacity smoothly
+      opacity = Math.max(0.1, opacity - 0.1); // Don't go fully invisible
       setConfettiPieces(pieces);
+      setConfettiOpacity(opacity);
 
       if (pieces === 0) {
         clearInterval(interval);
       }
     }, 500);
-  };
+    };
+
 
   const toggleCompletion = async (habitId: string, xp: number, date: string) => {
     const isCompleted = completions[habitId]?.includes(date) ?? false;
@@ -238,19 +249,20 @@ const Tracker = () => {
       <UserStats level={level} xp={xp}/>
 
       {hasMounted && confettiPieces > 0 && (
+        <div style={{ opacity: confettiOpacity, transition: 'opacity 0.5s linear' }}>
         <Confetti
           width={width-20}
           height={height}
           numberOfPieces={confettiPieces}
           recycle={false}
         />
+        </div>
       )}
 
       <HelperAI />
 
-      {/* <div className={`w-200 grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}> */}
-      <Card className={`w-full max-w-4xl p-10 justify-center items-center grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}>
-      {/* <div className={`grid grid-cols-[150px_repeat(7,32px)] auto-rows-min gap-[10px]`}> */}
+      {/* <Card className={`w-full max-w-4xl p-10 justify-center items-center grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}> */}
+      <Card className={`w-full max-w-4xl p-10 justify-center items-center grid gap-[10px]`} style={{ gridTemplateColumns: `150px repeat(${currentWeekDays.length}, 32px)` }}>
         <CalendarHeader
           year={year}
           month={month}

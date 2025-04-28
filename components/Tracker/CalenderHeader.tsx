@@ -26,20 +26,20 @@ const CalendarHeader = ({
 }) => (
   <>
     <div className="col-span-full flex justify-between items-center mb-2">
-      <Button onClick={onPrevWeek} disabled={!canGoPrev}>←</Button>
-      <div className="text-lg font-bold">{`${getMonthFromIndex(month)} ${currentWeek[0]}-${currentWeek[currentWeek.length-1]}`}</div>
-      <Button onClick={onNextWeek} disabled={!canGoNext}>→</Button>
+      <Button onClick={onPrevWeek} disabled={!canGoPrev} className='cursor-pointer'>←</Button>
+      <div className="text-lg font-bold cursor-default">{`${getMonthFromIndex(month)} ${currentWeek[0]}-${currentWeek[currentWeek.length-1]}`}</div>
+      <Button onClick={onNextWeek} disabled={!canGoNext} className='cursor-pointer'>→</Button>
     </div>
 
-    <Separator className='bg-black text-black'/>
+    <Separator className="" />
 
     {currentWeek.map((day) => (
       <div
         key={day}
-        className={`text-center text-sm py-1 rounded flex flex-col items-center justify-center ${TODAY === day && 'bg-black/80 text-white'}`}
+        className={`text-center cursor-default text-sm py-1 rounded flex flex-col items-center justify-center ${TODAY === day && 'bg-black/80 text-white'}`}
       >
         <div>{day}</div>
-        <hr className='w-full h-0.5 my-0.5 bg-black text-black'/>
+        <hr className='my-0.5 h-[1px] w-full bg-muted'/>
         <div>{getCurrentDay(year, month, day)}</div>
       </div>
     ))}
