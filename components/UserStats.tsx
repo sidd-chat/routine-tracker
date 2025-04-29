@@ -24,8 +24,8 @@ const UserStats = ({ level, xp }: { level: number; xp: number }) => {
         />
 
         {/* Centered Text */}
-        <div className="absolute inset-0 flex items-center justify-center text-sm font-extralight tracking-widest text-white dark:text-gray-200">
-          {Math.round(progress)}% to next level
+        <div className="absolute inset-0 flex items-center justify-center text-sm font-extralight tracking-widest text-white dark:text-gray-200 cursor-default">
+          {Math.round(progress)}%
         </div>
       </div>
     </div>

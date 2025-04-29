@@ -119,13 +119,13 @@ const HelperAI = () => {
         <Button
           type="submit"
           size="icon"
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
           disabled={loading}
         >
           {loading ? (
             <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
           ) : (
-            <Send size={18} className="cursor-pointer" />
+            <Send size={18}/>
           )}
         </Button>
       </form>

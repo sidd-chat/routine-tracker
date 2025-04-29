@@ -2,6 +2,7 @@ import { getCurrentDay, getMonthFromIndex } from '@/lib/utils';
 import React from 'react'
 import { Button } from '../ui/button';
 import { Separator } from '@radix-ui/react-separator';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const TODAY = new Date().getDate();
 
@@ -26,9 +27,13 @@ const CalendarHeader = ({
 }) => (
   <>
     <div className="col-span-full flex justify-between items-center mb-2">
-      <Button onClick={onPrevWeek} disabled={!canGoPrev} className='cursor-pointer'>←</Button>
+      <Button onClick={onPrevWeek} disabled={!canGoPrev} className='cursor-pointer'>
+        <ArrowLeft />
+      </Button>
       <div className="text-lg font-bold cursor-default">{`${getMonthFromIndex(month)} ${currentWeek[0]}-${currentWeek[currentWeek.length-1]}`}</div>
-      <Button onClick={onNextWeek} disabled={!canGoNext} className='cursor-pointer'>→</Button>
+      <Button onClick={onNextWeek} disabled={!canGoNext} className='cursor-pointer'>
+        <ArrowRight />
+      </Button>
     </div>
 
     <Separator className="" />

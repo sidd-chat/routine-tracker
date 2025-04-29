@@ -38,12 +38,14 @@ import HelperAI from '../HelperAI'
 // * Finish Helper AI Implementation
 // * Tailwind CSS Colors Implement
 // * Add Light and Dark Mode
+// * On deletion of atom, XP and level is resetting to 0 and 1 respectively ??
 // ? Google Login should route to /dashboard and not /
 
 // ! Test optimistic updates on failure rollback working or not
 
 // TODO: Continue Backend
 // TODO: Implement Caching
+// TODO: Complete Rewards Shop
 
 // * ------ MVP DONE ------
 
@@ -88,6 +90,9 @@ const Tracker = () => {
         .select()
         .eq('user_id', user?.id)
         .order('created_at', {ascending: true})
+
+      // const res = await fetch(`/api/atoms?userId=${user?.id}`, { cache: "no-store" })
+      // const data = await res.json()
 
       if(error) {
         setError('Error Fetching Atoms')
@@ -261,7 +266,6 @@ const Tracker = () => {
 
       <HelperAI />
 
-      {/* <Card className={`w-full max-w-4xl p-10 justify-center items-center grid grid-cols-[150px_repeat(${currentWeekDays.length},32px)] auto-rows-min gap-[10px]`}> */}
       <Card className={`w-full max-w-4xl p-10 justify-center items-center grid gap-[10px]`} style={{ gridTemplateColumns: `150px repeat(${currentWeekDays.length}, 32px)` }}>
         <CalendarHeader
           year={year}

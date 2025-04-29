@@ -1,42 +1,34 @@
-"use client"
+'use client'
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useTheme } from 'next-themes'
+
 import { cn, navItems } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { LogOut, Menu, Sun, Moon, X } from 'lucide-react'
 import supabase from '@/lib/supabase'
-import { useEffect, useState } from 'react'
 
 const Navbar = () => {
   const pathname = usePathname()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(true)
+
+  // Next-themes setup
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   const handleLogout = async () => {
-    let { error } = await supabase.auth.signOut()
-
-    if (error) {
-      alert(error.message)
-    } else {
-      router.replace('/login')
-    }
+    const { error } = await supabase.auth.signOut()
+    if (error) alert(error.message)
+    else router.replace('/login')
   }
 
   const toggleTheme = () => {
-    setIsDarkMode(prev => !prev)
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.toggle('dark')
-    }
+    setTheme(theme === 'dark' ? 'light' : 'dark')
   }
-
-  useEffect(() => {
-    // Ensure dark mode is default
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.add('dark')
-    }
-  }, [])
 
   return (
     <>
@@ -61,16 +53,27 @@ const Navbar = () => {
         {/* Desktop Right Actions */}
         <div className="hidden md:flex items-center gap-2">
           {/* Theme Toggle */}
-          <Button variant="ghost" size="icon" onClick={toggleTheme} className="transition-transform duration-300 hover:rotate-270 cursor-pointer">
-            {isDarkMode ? (
-              <Sun className="h-5 w-5 text-yellow-400 transition-all duration-300" />
-            ) : (
-              <Moon className="h-5 w-5 text-blue-600 transition-all duration-300" />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="transition-transform duration-300 hover:rotate-270 cursor-pointer"
+          >
+            {mounted && (
+              theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-yellow-400 transition-all duration-300" />
+              ) : (
+                <Moon className="h-5 w-5 text-blue-600 transition-all duration-300" />
+              )
             )}
           </Button>
 
           {/* Logout */}
-          <Button variant="ghost" className="flex items-center gap-2 cursor-pointer" onClick={handleLogout}>
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={handleLogout}
+          >
             <LogOut className="h-4 w-4" />
             Logout
           </Button>
@@ -78,11 +81,18 @@ const Navbar = () => {
 
         {/* Mobile Hamburger + Theme Toggle */}
         <div className="flex items-center gap-2 md:hidden">
-          <Button variant="ghost" size="icon" onClick={toggleTheme} className="transition-transform duration-300 hover:rotate-360">
-            {isDarkMode ? (
-              <Sun className="h-5 w-5 text-yellow-400 transition-all duration-300" />
-            ) : (
-              <Moon className="h-5 w-5 text-blue-600 transition-all duration-300" />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="transition-transform duration-300 hover:rotate-360"
+          >
+            {mounted && (
+              theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-yellow-400 transition-all duration-300" />
+              ) : (
+                <Moon className="h-5 w-5 text-blue-600 transition-all duration-300" />
+              )
             )}
           </Button>
 
@@ -98,7 +108,6 @@ const Navbar = () => {
 
       {/* Mobile Sidebar */}
       <div className={`fixed inset-0 z-50 bg-black/50 backdrop-blur-sm ${sidebarOpen ? 'visible' : 'invisible'} transition-all`}>
-        {/* Sidebar panel */}
         <div
           className={cn(
             "fixed right-0 top-0 h-full w-64 bg-background shadow-lg p-6 flex flex-col gap-6 transform transition-transform duration-300",
@@ -139,10 +148,7 @@ const Navbar = () => {
         </div>
 
         {/* Click outside area */}
-        <div
-          className="w-full h-full"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="w-full h-full" onClick={() => setSidebarOpen(false)} />
       </div>
     </>
   )

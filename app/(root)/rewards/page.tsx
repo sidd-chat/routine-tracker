@@ -65,11 +65,12 @@ export default function RewardsShop() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mt-10 mb-6 text-center">🎁 Rewards Shop</h1>
-
-      <Card className="mb-8">
+    <div className="max-w-4xl mx-auto p-4 pt-0">
+      <Card className="mb-8 mt-5">
         <CardContent className="overflow-x-auto p-4">
+          <h1 className="text-2xl font-bold text-center">🎁 Rewards Shop</h1>
+          <h2 className="text-md font-bold mt-2 mb-5 text-center">Your Coins: </h2>
+
           <table className="w-full table-auto">
             <thead>
               <tr className="text-left border-b">
