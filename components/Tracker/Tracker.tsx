@@ -14,6 +14,7 @@ import useUser from '@/hooks/useUser'
 import { Card } from '../ui/card'
 import useAtomDialog from '@/hooks/useAtomDialog'
 import HelperAI from '../HelperAI'
+import CalendarFooterNotes from './CalendarFooterNotes'
 
 // * Add XP system and levels - Done
 // * Fix confetti on box check - Done
@@ -43,13 +44,16 @@ import HelperAI from '../HelperAI'
 
 // ! Test optimistic updates on failure rollback working or not
 
-// TODO: Continue Backend
+// TODO: Implement Frequency for Atoms
+// TODO: XP Gain animation on checking atoms (small dissipating +5xp type of thing)
+// TODO: ?? Graphical View where user can connect atoms, cores, pathways and legacies
+// TODO: Implement Cores
 // TODO: Implement Caching
 // TODO: Complete Rewards Shop
 
 // * ------ MVP DONE ------
 
-// TODO: Implement cores, pathways and legacies
+// TODO: Implement pathways and legacies
 // TODO: Complete Backend
 
 const Tracker = () => {
@@ -174,8 +178,7 @@ const Tracker = () => {
         clearInterval(interval);
       }
     }, 500);
-    };
-
+  };
 
   const toggleCompletion = async (habitId: string, xp: number, date: string) => {
     const isCompleted = completions[habitId]?.includes(date) ?? false;
@@ -266,7 +269,9 @@ const Tracker = () => {
 
       <HelperAI />
 
-      <Card className={`w-full max-w-4xl p-10 justify-center items-center grid gap-[10px]`} style={{ gridTemplateColumns: `150px repeat(${currentWeekDays.length}, 32px)` }}>
+      <Card
+        className={`w-full max-w-4xl p-10 justify-center items-center grid gap-[10px]`} style={{ gridTemplateColumns: `150px repeat(${currentWeekDays.length}, 32px)` }}
+      >
         <CalendarHeader
           year={year}
           month={month}
@@ -290,6 +295,8 @@ const Tracker = () => {
           currentWeekDays={currentWeekDays}
         />
 
+        <CalendarFooterNotes daysOfWeek={currentWeekDays} year={year} month={month}/>
+
         <div className="col-span-full flex justify-center items-center mt-4">
           {dialog}
         </div>
@@ -298,7 +305,7 @@ const Tracker = () => {
       {user ? (
         <Charts userId={user.id} />
       ) : (
-        <div className="text-sm text-muted-foreground mt-10">Loading your stats...</div>
+        <div className="text-md font-semibold text-muted-foreground mt-10">Loading your stats...</div>
       )}
     </div>
   )

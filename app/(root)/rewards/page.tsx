@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDistanceToNowStrict, addDays, isBefore } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import supabase from "@/lib/supabase";
+import useUser from "@/hooks/useUser";
 
 type Reward = {
   id: number;
@@ -29,6 +31,30 @@ export default function RewardsShop() {
   const [newRewardName, setNewRewardName] = useState("");
   const [newRewardCost, setNewRewardCost] = useState("");
   const [newRewardCooldown, setNewRewardCooldown] = useState("");
+
+  const [userCoins, setUserCoins] = useState(0);
+  const { user } = useUser();
+
+  useEffect(() => {
+    const fetchUserCoins = async () => {
+      if(!user)
+        return;
+
+      const { data, error } = await supabase
+        .from('user_stats')
+        .select('coins')
+        .eq('user_id', user?.id)
+        .single();
+
+      if(error || !data) {
+        console.log('Error fetching user coins:', error.message)
+      }
+
+      setUserCoins(data?.coins)
+    }
+
+    fetchUserCoins();
+  }, [user])
 
   const handleRedeem = (id: number) => {
     setRewards((prev) =>
@@ -69,7 +95,7 @@ export default function RewardsShop() {
       <Card className="mb-8 mt-5">
         <CardContent className="overflow-x-auto p-4">
           <h1 className="text-2xl font-bold text-center">🎁 Rewards Shop</h1>
-          <h2 className="text-md font-bold mt-2 mb-5 text-center">Your Coins: </h2>
+          <h2 className="text-md font-bold mt-2 mb-5 text-center">Your Coins: {userCoins}</h2>
 
           <table className="w-full table-auto">
             <thead>

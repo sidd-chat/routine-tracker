@@ -36,7 +36,7 @@ const CalendarHeader = ({
       </Button>
     </div>
 
-    <Separator className="" />
+    <Separator className=""/>
 
     {currentWeek.map((day) => (
       <div

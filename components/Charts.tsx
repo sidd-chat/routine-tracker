@@ -27,7 +27,7 @@ export function Charts({ userId }: { userId: string }) {
         .from("daily_completions")
         .select("date, completed")
         .eq("user_id", userId)
-        .gte("date", format(startOfMonth(new Date()), "yyyy-MM-dd"))
+        // .gte("date", format(startOfMonth(new Date()), "yyyy-MM-dd"))
         .order('date', {ascending: true})
 
       if (error) {
